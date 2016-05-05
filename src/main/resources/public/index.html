@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Server-Sent Events Progress Bar Example</title>
+    <!-- load the bootstrap stylesheet -->
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" media="all" rel="stylesheet" type="text/css" />
+
+    <script>
+        var eventSource;
+
+        function start() { // при нажатии на Старт
+
+            if (!window.EventSource) {
+                alert('В этом браузере нет поддержки EventSource.');
+                return;
+            }
+
+            eventSource = new EventSource('/events');
+
+            eventSource.onopen = function(e) {
+                log("Соединение открыто");
+            };
+
+            eventSource.onerror = function(e) {
+                if (this.readyState == EventSource.CONNECTING) {
+                    log("Соединение порвалось, пересоединяемся...");
+                } else {
+                    log("Ошибка, состояние: " + this.readyState);
+                }
+            };
+
+            eventSource.onmessage = function(e) {
+                var complete = e.data;
+                var el = document.getElementsByClassName("progress-bar")[0];
+                var completeString = complete + "%";
+                el.setAttribute("style", "width:" + completeString);
+                el.innerHTML = completeString;
+                if (e.data == "100"){
+                    stop();
+                }
+            };
+        }
+
+        function stop() { // при нажатии на Стоп
+            eventSource.close();
+            log("Соединение завершено");
+        }
+
+        function log(msg) {
+            logElem.innerHTML += msg + "<br>";
+        }
+    </script>
+</head>
+
+<body>
+
+<div class="container">
+    <button onclick="start()">Старт</button>
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped active" role="progressbar"
+             aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">
+            0%
+        </div>
+    </div>
+    <div id="logElem"></div>
+</div>
+
+
+</body>
+
+</html>
