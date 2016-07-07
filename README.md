@@ -1,4 +1,7 @@
 ### Real-Time Progress Bar with Spring MVC + Server-sent events (SSE)
+---
+
+#### [Demo](http://46.101.166.4:8081)
 
 There are cases where we want to show users status of a long term process which has been started on the server. 
 To achieve that we usually use a progress bar. I want to expose the implementation of the progress bar with using Server-sent events 
